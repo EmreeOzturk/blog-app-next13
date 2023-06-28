@@ -12,7 +12,7 @@ const Header = () => {
       <div className={styles.wrapper}>
         <Logo />
         <div className={styles.right}>
-          {!loggedIn ? <UserMenu /> : <Menu />}
+          {loggedIn ? <UserMenu /> : <Menu />}
         </div>
       </div>
     </div>

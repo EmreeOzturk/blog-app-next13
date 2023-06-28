@@ -1,35 +1,38 @@
 'use client';
+import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
-import {useState} from 'react';
-import { AiOutlineClose } from 'react-icons/ai';
 import person from '@/public/person.jpg';
 import styles from './Header.module.css';
 import Link from 'next/link';
+import Button from '@/components/common/Button';
 
 const UserMenu = () => {
-    const [loggedIn, setLoggedIn] = useState(false);
-    const [showDropDown, setShowDropDown] = useState(false);
-  
-    const handleShowDropDown = () => setShowDropDown((prev) => true);
-    const handleHideDropDown = () => setShowDropDown((prev) => false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [showDropDown, setShowDropDown] = useState(false);
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+  const handleToggleDropDown = () => setShowDropDown((prev) => !prev);
+  const handleHideDropDown = () => setShowDropDown(false);
+
+  const handleClickOutside = (e: any) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+      setShowDropDown(false);
+    }
+  };
+
   return (
-    <div>
+    <div className={styles.userMenu} ref={dropdownRef}>
       <Image
-        onClick={handleShowDropDown}
+        onClick={handleToggleDropDown}
         src={person}
-        width={60}
-        height={60}
         alt="person"
+        className={styles.person}
       />
       {showDropDown && (
-        <div className={styles.dropdown}>
-          <AiOutlineClose
-            onClick={handleHideDropDown}
-            className={styles.closeIcon}
-          />
-          <button onClick={handleHideDropDown} className={styles.logout}>
-            Logout
-          </button>
+        <div className={styles.dropdownMenu}>
           <Link
             onClick={handleHideDropDown}
             href="/create-post"
@@ -37,6 +40,9 @@ const UserMenu = () => {
           >
             Create
           </Link>
+          <Button onClick={handleHideDropDown} className={styles.logout}>
+            Logout
+          </Button>
         </div>
       )}
     </div>
