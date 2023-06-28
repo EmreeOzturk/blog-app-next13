@@ -10,18 +10,21 @@ const BlogCard: React.FC<Blog> = ({ id, title, desc, img }) => {
   return (
     <div className={styles.container}>
       <div className={styles.wrapper}>
-        <Link className={styles.imgContainer} href={`/`}>
-          <Image src={img} width={350} height={350} alt="blog" />
+        <Link href={`/`}>
+          <Image src={img} alt="blog" />
         </Link>
         <div className={styles.blogData}>
           <div className={styles.left}>
             <h3>{title}</h3>
             <p>{desc}</p>
           </div>
-          <div className={styles.right}>
+          <div className={styles.like}>
             12{' '}
             {isLiked ? <AiFillLike size={20} /> : <AiOutlineLike size={20} />}
           </div>
+        </div>
+        <div className={styles.createdBy}>
+          <p>Created by: <span>John Doe</span></p>
         </div>
       </div>
     </div>
