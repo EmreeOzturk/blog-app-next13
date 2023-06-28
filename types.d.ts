@@ -1,7 +1,9 @@
+import { StaticImageData } from 'next/image';
+
 type Blog = {
-    id: string;
-    title: string;
-    content: string;
-    desc : string;
-    img: string;
-}
+  id: number;
+  title: string;
+  desc: string;
+  img: StaticImageData;
+  authorId: string;
+};
