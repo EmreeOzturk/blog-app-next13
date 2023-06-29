@@ -15,6 +15,7 @@ export default function Home() {
             authorId={blog.authorId}
           />
         ))}
+        
       </div>
     </div>
   );
