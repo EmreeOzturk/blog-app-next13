@@ -12,15 +12,18 @@ let global: Global = globalThis as Global;
 let cached = global.mongoose || { conn: null, promise: null };
 
 if (!cached) {
+  console.log('Creating new cached');
   cached = global.mongoose = { conn: null, promise: null };
 }
 
 async function dbConnect() {
   if (cached.conn) {
+    console.log('Using cached connection');
     return cached.conn;
   }
 
   if (!cached.promise) {
+    console.log('Creating new connection');
     cached.promise = mongoose
       .connect(process.env.MONGO_URL as string)
       .then((mongoose) => {
