@@ -1,42 +1,34 @@
-import mongoose from 'mongoose';
+import mongoose, { Mongoose, Connection } from 'mongoose';
 
-type Connection = {
-  isConnected?: number;
+type Global = typeof globalThis & {
+  mongoose: {
+    conn: Connection | any | null;
+    promise: Promise<Mongoose> | null;
+  };
 };
 
-const connection: Connection = {};
+let global: Global = globalThis as Global;
 
-const connectDB = async () => {
-  if (connection.isConnected) {
-    console.log('Already connected to the database');
-    return;
+let cached = global.mongoose || { conn: null, promise: null };
+
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null };
+}
+
+async function dbConnect() {
+  if (cached.conn) {
+    return cached.conn;
   }
 
-  try {
-    await mongoose.connect(process.env.MONGODB_URI as string);
-
-    connection.isConnected = mongoose.connections[0].readyState;
-    console.log('Successfully connected to the database');
-  } catch (error) {
-    console.error('Error connecting to the database:', error);
-    process.exit(1);
+  if (!cached.promise) {
+    cached.promise = mongoose
+      .connect(process.env.MONGO_URI as string)
+      .then((mongoose) => {
+        return mongoose;
+      });
   }
-};
+  cached.conn = await cached.promise;
+  return cached.conn;
+}
 
-const disconnectDB = async () => {
-  if (!connection.isConnected) {
-    console.log('No active database connection to disconnect');
-    return;
-  }
-
-  try {
-    await mongoose.disconnect();
-    connection.isConnected = 0;
-    console.log('Successfully disconnected from the database');
-  } catch (error) {
-    console.error('Error disconnecting from the database:', error);
-    process.exit(1);
-  }
-};
-
-export default { connectDB, disconnectDB };
+export default dbConnect;
